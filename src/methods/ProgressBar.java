@@ -31,7 +31,7 @@ public class ProgressBar implements ActionListener, ChangeListener {
 		
 		frame = new JFrame(method+" is ready to run");
 		frame.setBounds(100, 100, 400, 150);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		Container contentPanel = frame.getContentPane();
@@ -46,6 +46,7 @@ public class ProgressBar implements ActionListener, ChangeListener {
 		progressbar.setPreferredSize(new Dimension(300, 50));
 		progressbar.setBorderPainted(true);
 		progressbar.setBackground(Color.pink);
+		
 		JPanel panel = new JPanel(new BorderLayout());
 		b = new JButton("Sure to Run");
 		b.setForeground(Color.blue);
@@ -62,6 +63,7 @@ public class ProgressBar implements ActionListener, ChangeListener {
 		contentPanel.add(label);
 		contentPanel.add(progressbar);
 		// frame.pack();
+		frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
 	}
 	public void actionPerformed(ActionEvent e) {
@@ -72,7 +74,12 @@ public class ProgressBar implements ActionListener, ChangeListener {
 			
 			MethodRun mr = new MethodRun();
 			Process proc =mr.scan(this.inputpath,this.method);
-			//proc.waitFor();
+			try {
+				proc.waitFor();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			progressbar.setValue(100);
 			progressbar.setIndeterminate(false);
 			
@@ -100,6 +107,6 @@ public class ProgressBar implements ActionListener, ChangeListener {
 					e.getMessage());
 			e.printStackTrace();
 		}
-		new ProgressBar("~/Desktop/SubgraphDetection/data/StandardDataset/com_traffic",4);
+		new ProgressBar("/home/hongyi/Desktop/SubgraphDetection/data/StandardDataset/com_traffic",4);
 	}
 }

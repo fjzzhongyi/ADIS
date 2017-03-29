@@ -3,8 +3,15 @@ package streamcontrol;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
+import javax.swing.JTextArea;
+
 public class StreamControl extends Thread{
 	public static Process proc=null;
+	private JTextArea jta;
+	public StreamControl(JTextArea ta){
+		this.jta=ta;
+	}
+	
 	public void run(){
 		System.out.println("StreamControl Runs");
 		while (true){
@@ -24,7 +31,7 @@ public class StreamControl extends Thread{
 				while ((ch=bis.read())!=-1){
 					sb.append((char)ch);
 					if (ch=='\n'){
-						System.out.println(sb);
+						this.jta.append(sb.toString());
 						sb=new StringBuffer();
 					}
 				}

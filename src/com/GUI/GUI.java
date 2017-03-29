@@ -11,6 +11,7 @@ import javax.swing.*;
 
 import curve.anomaly.AnomalyCurve;
 import curve.event.EventCurve;
+import imageDis.RuntimeImage;
 import methods.ProgressBar;
 import streamcontrol.StreamControl;
 
@@ -45,9 +46,12 @@ public class GUI extends JFrame implements ActionListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		GUI WINDOW = new GUI();
-		StreamControl sc =new StreamControl();
-		sc.run();
+		
+		GUI main_window = new GUI();
+		StreamControl sc =new StreamControl(main_window.ta);
+		sc.start();
+		RuntimeImage ri = new RuntimeImage();
+		
 		
 	}
 	
@@ -89,14 +93,14 @@ public class GUI extends JFrame implements ActionListener{
 		jbchoose = new JButton("...");
 		input = new JTextField("Your Input File Path");
 		jlchoose = new JLabel("Please Choose File Path");
-		jrbS = new JRadioButton("Static");
-		jrbD = new JRadioButton("Dynamic");
-		jrbSM1 = new JRadioButton("SM1");
-		jrbSM2 = new JRadioButton("SM2");
-		jrbSM3 = new JRadioButton("SM3");
+		jrbS = new JRadioButton("Nodewise");
+		jrbD = new JRadioButton("Edgewise");
+		jrbSM1 = new JRadioButton("dGraphScan");
+		jrbSM2 = new JRadioButton("DepthFirstScan");
+		jrbSM3 = new JRadioButton("AdditiveScan");
 		jrbSM4 = new JRadioButton("NPHGS");
-		jrbDM1 = new JRadioButton("dGraphScan");
-		jrbDM2 = new JRadioButton("DM2");
+		jrbDM1 = new JRadioButton("Meden");
+		jrbDM2 = new JRadioButton("NetSpot");
 		jrbDM3 = new JRadioButton("DM3");
 		jrbS.setSelected(true);
 		bg1 = new ButtonGroup();
@@ -207,9 +211,16 @@ public class GUI extends JFrame implements ActionListener{
 		if (e.getSource().equals(jbSubDet)){
 			//Subgraph Detection algorithm
 			if (this.inputfile_path==null){
-				JOptionPane.showMessageDialog(null, "Choose your input path", "Error", JOptionPane.ERROR_MESSAGE);	
+				JOptionPane.showMessageDialog(null, "Choose your input path", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-			if (jrbSM4.isSelected()){
+			if (jrbSM1.isSelected()){
+				new ProgressBar(this.inputfile_path,1);
+			}else if (jrbSM2.isSelected()){
+				new ProgressBar(this.inputfile_path,2);
+			}else if (jrbSM3.isSelected()){
+				new ProgressBar(this.inputfile_path,3);
+			}else if (jrbSM4.isSelected()){
 				new ProgressBar(this.inputfile_path,4);
 			}
 			
