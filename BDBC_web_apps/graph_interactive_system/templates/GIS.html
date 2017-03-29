@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grpah Interactive System</title>
+    <script src="/static/echarts.js"></script>
+    <script src="/static/jquery-3.2.0.min.js"></script>
+</head>
+<body>
+    <div id="GIS-main" style="width: 100%; height: 800px;"></div>
+    <script type="text/javascript">
+        var GIS = echarts.init(document.getElementById('GIS-main'));
+        var option = {
+            baseOption: {
+                title: {
+                    text: 'Graph Interactive System',
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                legend: {
+                    data:['Algorithm1'],
+                },
+                timeline: {
+                    data: ['2002-01-01', '2003-01-01']
+                },
+                series : [
+                    {
+                        name: 'Graph',
+                        type: 'graph',
+                        layout: 'force',
+                        roam: true,
+                        draggable: true,
+                        label: {
+                            normal: {
+                                position: 'right'
+                            }
+                        },
+                        force: {
+                            repulsion: 100
+                        }
+                    }
+                ]
+            },
+            options: []
+        };
+        $.get('{% url 'get_graph' %}').done(function (data) {
+            xdata = {series: [
+                {
+                    data: data.nodes,
+                    links: data.edges
+                }
+            ]};
+            option.options.push(xdata);
+            option.options.push(xdata);
+            GIS.setOption(option);
+        }).fail(function (xhr, status) {
+            alert('失败: ' + xhr.status + ', 原因: ' + status);
+        });
+    </script>
+</body>
+</html>

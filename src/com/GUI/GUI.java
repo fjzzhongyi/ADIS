@@ -4,15 +4,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.swing.*;
 
 import curve.anomaly.AnomalyCurve;
+import curve.event.EventCurve;
+import methods.ProgressBar;
+import streamcontrol.StreamControl;
 
 public class GUI extends JFrame implements ActionListener{
 	
 	JPanel jp0,jp1,jp2,jp3,jp4,jp5,jp6;
-	JButton jbSubDet,jbEveDetRes,jbAnoDetRes,jbSubDis,jbchoose;
+	JButton jbSubDet,jbEveDetRes,jbAnoDetRes,jbSubDis,jbEveDis,jbchoose;
 	JLabel jlchoose;
 	JRadioButton jrbS,jrbD,jrbSM1,jrbSM2,jrbSM3,jrbSM4,jrbDM1,jrbDM2,jrbDM3;
 	ButtonGroup bg1,bg2,bg3;
@@ -21,6 +26,7 @@ public class GUI extends JFrame implements ActionListener{
 	JTextArea ta,inter;
 	JScrollPane jspDis,jspInter;
 	String DisplayString,testDisString, InterString, testInterString;
+	String inputfile_path;
 
 	public static void main(String[] args) {
 		try {
@@ -40,6 +46,8 @@ public class GUI extends JFrame implements ActionListener{
 			e.printStackTrace();
 		}
 		GUI WINDOW = new GUI();
+		StreamControl sc =new StreamControl();
+		sc.run();
 		
 	}
 	
@@ -49,7 +57,7 @@ public class GUI extends JFrame implements ActionListener{
 		jp1 = new JPanel();
 		jp2 = new JPanel();
 		jp3 = new JPanel();
-		jp4 = new JPanel();
+		jp4 = new JPanel(new GridLayout(2,2));
 		jp5 = new JPanel(null);
 		jp6 = new JPanel(new BorderLayout());
 		testDisString = new String("Display Area");
@@ -73,10 +81,11 @@ public class GUI extends JFrame implements ActionListener{
 		InterString = testInterString;
 		inter = new JTextArea(InterString,12,15);					//initialize the Size
 		jspInter = new JScrollPane(inter);
-		jbSubDet = new JButton("Subgraph Detection");
+		jbSubDet = new JButton("Run Subgraph Detection");
 		jbEveDetRes = new JButton("Event Detection Result");
 		jbAnoDetRes = new JButton("Anomaly Detection Result");
 		jbSubDis = new JButton("Subgraph Display");
+		jbEveDis = new JButton("Event Display");
 		jbchoose = new JButton("...");
 		input = new JTextField("Your Input File Path");
 		jlchoose = new JLabel("Please Choose File Path");
@@ -85,7 +94,7 @@ public class GUI extends JFrame implements ActionListener{
 		jrbSM1 = new JRadioButton("SM1");
 		jrbSM2 = new JRadioButton("SM2");
 		jrbSM3 = new JRadioButton("SM3");
-		jrbSM4 = new JRadioButton("SM4");
+		jrbSM4 = new JRadioButton("NPHGS");
 		jrbDM1 = new JRadioButton("dGraphScan");
 		jrbDM2 = new JRadioButton("DM2");
 		jrbDM3 = new JRadioButton("DM3");
@@ -113,6 +122,7 @@ public class GUI extends JFrame implements ActionListener{
 		jp4.add(jbEveDetRes);
 		jp4.add(jbAnoDetRes);
 		jp4.add(jbSubDis);
+		jp4.add(jbEveDis);
 		jp5.add(jlchoose);
 		jp5.add(input);
 		jp5.add(jbchoose);
@@ -144,6 +154,7 @@ public class GUI extends JFrame implements ActionListener{
 		jbEveDetRes.addActionListener(this);
 		jbAnoDetRes.addActionListener(this);
 		jbSubDis.addActionListener(this);
+		jbEveDis.addActionListener(this);
 		
 		double lx = Toolkit.getDefaultToolkit().getScreenSize().getWidth();  
         double ly = Toolkit.getDefaultToolkit().getScreenSize().getHeight();  
@@ -172,7 +183,8 @@ public class GUI extends JFrame implements ActionListener{
                 return;  
             } else {  
                 File f = jfc.getSelectedFile();							// get the path  
-                input.setText(f.getAbsolutePath());  
+                input.setText(f.getAbsolutePath()); 
+                inputfile_path=f.getAbsolutePath();
             }  
         }
 		
@@ -194,11 +206,19 @@ public class GUI extends JFrame implements ActionListener{
 		
 		if (e.getSource().equals(jbSubDet)){
 			//Subgraph Detection algorithm
-			JOptionPane.showMessageDialog(null,inter.getText(),"Result",JOptionPane.INFORMATION_MESSAGE);
+			if (this.inputfile_path==null){
+				JOptionPane.showMessageDialog(null, "Choose your input path", "Error", JOptionPane.ERROR_MESSAGE);	
+			}
+			if (jrbSM4.isSelected()){
+				new ProgressBar(this.inputfile_path,4);
+			}
+			
+			
 		}
 		
 		if (e.getSource().equals(jbEveDetRes)){
 			//Event Detection Result Part
+			EventCurve ec = new EventCurve();
 			JOptionPane.showMessageDialog(null,"Result","Event Detection Result",JOptionPane.INFORMATION_MESSAGE);
 		}
 		
@@ -210,7 +230,20 @@ public class GUI extends JFrame implements ActionListener{
 		
 		if (e.getSource().equals(jbSubDis)){
 			//Subgraph Display Part
+			java.net.URI uri;
+			try {
+				uri = new java.net.URI("http://127.0.0.1:8000/GIS/");
+				java.awt.Desktop.getDesktop().browse(uri);
+			} catch (URISyntaxException | IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			JOptionPane.showMessageDialog(null,"Result","Subgraph Display Part",JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		if (e.getSource().equals(jbEveDis)){
+			//Subgraph Display Part
+			JOptionPane.showMessageDialog(null,"Result","Event Display Part",JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 

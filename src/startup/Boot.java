@@ -1,6 +1,6 @@
 package startup;
 
-import dgraphscan.DGraphScan;
+import methods.MethodRun;
 import userinterface.MethodRunTextBox;
 
 public class Boot {
@@ -10,11 +10,10 @@ public class Boot {
 		
 		MethodRunTextBox mrtb = new MethodRunTextBox();
 
-		DGraphScan dgs= new DGraphScan();
-		Process dgs_proc=dgs.scan();
+		MethodRun dgs= new MethodRun();
+		Process dgs_proc=dgs.scan("NPHGS",4);
 		mrtb.setProcInputStream(dgs_proc);
 		new Thread(mrtb).start();
-
 		
 		
 		try {
