@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Map Interactive System</title>
+    <script src="/common_static/js/echarts.js"></script>
+    <script src="/common_static/js/jquery-3.2.0.min.js"></script>
+    <script src="/common_static/map/js/china.js"></script>
+</head>
+<body>
+    <div id="MIS-main" style="width: 100%; height: 800px;"></div>
+    <script type="text/javascript">
+        var MIS = echarts.init(document.getElementById('MIS-main'));
+        var option = {
+            baseOption: {
+                title : {
+                    text: 'Haze Forecast Map',
+                    left: 'center'
+                },
+                tooltip : {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data:['TruthLabel']
+                },
+                visualMap: {
+                    min: 0,
+                    max: 5,
+                    show: false
+                },
+                timeline: {
+                    playInterval: 200,
+                    left: 0,
+                    right: 0,
+                    symbolSize: 5,
+                    tooltip: {
+                        formatter: function (params) {
+                            if (typeof(params.data) === 'string')
+                                return params.data;
+                            else
+                                return params.data.value;
+                        }
+                    },
+                    label: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data: []
+                },
+                toolbox: {
+                    show: true,
+                    orient : 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature : {
+                        mark : {show: true},
+                        dataView : {show: true, readOnly: false},
+                        restore : {show: true},
+                        saveAsImage : {show: true}
+                    }
+                },
+                series : [
+                    {
+                        name: 'TruthLabel',
+                        type: 'map',
+                        mapType: 'china',
+                        roam: false,
+                        label: {
+                            normal: {
+                                show: false
+                            },
+                            emphasis: {
+                                show: true
+                            }
+                        }
+                    }
+                ]
+            },
+            options: []
+        };
+        $.get('{% url 'get_map' %}').done(function (data) {
+            option.baseOption.legend.data = option.baseOption.legend.data.concat(data.algorithm_names)
+            option.baseOption.series = option.baseOption.series.concat(data.algorithm_series)
+            option.baseOption.timeline.data = data.timeline_data;
+            option.options = data.options;
+            MIS.setOption(option);
+        }).fail(function (xhr, status) {
+            alert('失败: ' + xhr.status + ', 原因: ' + status);
+        });
+    </script>
+</body>
+</html>
